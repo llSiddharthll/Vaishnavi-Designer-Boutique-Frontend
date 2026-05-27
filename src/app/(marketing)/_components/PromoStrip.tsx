@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, MessageCircle, ArrowRight } from "lucide-react";
+import { MessageCircle, ArrowRight } from "lucide-react";
 import { waLink } from "@/lib/env";
 
 export function PromoStrip() {
@@ -18,21 +18,16 @@ export function PromoStrip() {
       />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-5 px-5 text-center sm:px-8 md:flex-row md:justify-between md:gap-8 md:text-left">
         {/* Offer */}
-        <div className="flex items-center gap-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-vdb-gold text-vdb-wine-deep ring-4 ring-vdb-gold/20">
-            <Sparkles size={20} />
-          </span>
-          <div className="min-w-0">
-            <p className="font-accent text-[10px] uppercase tracking-[0.34em] text-vdb-gold-soft sm:text-[11px]">
-              Is mahine ka offer
-            </p>
-            <p className="mt-0.5 font-display text-xl leading-tight text-vdb-gold-soft sm:text-2xl">
-              <span className="font-semibold text-white">Free consultation</span> + first fitting on us
-            </p>
-            <p className="mt-1 font-accent text-xs italic text-vdb-cream/75 sm:text-sm">
-              Sirf appointment book kijiye — no advance, no obligation
-            </p>
-          </div>
+        <div className="min-w-0">
+          <p className="font-accent text-[10px] uppercase tracking-[0.34em] text-vdb-gold-soft sm:text-[11px]">
+            Is mahine ka offer
+          </p>
+          <p className="mt-0.5 font-display text-xl leading-tight text-vdb-gold-soft sm:text-2xl">
+            <span className="font-semibold text-white">Free consultation</span> + first fitting on us
+          </p>
+          <p className="mt-1 font-accent text-xs italic text-vdb-cream/75 sm:text-sm">
+            Sirf appointment book kijiye — no advance, no obligation
+          </p>
         </div>
 
         {/* Divider */}
