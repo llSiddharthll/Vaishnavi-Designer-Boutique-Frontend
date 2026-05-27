@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, animate, motion, useInView } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, BadgeCheck, ArrowRight } from "lucide-react";
+import { MessageCircle, BadgeCheck, ArrowRight, Scissors, Heart, Clock } from "lucide-react";
 import { img } from "@/lib/images";
 import { waLink } from "@/lib/env";
 import { GoogleRatingBadge } from "@/components/ui/GoogleRatingBadge";
@@ -82,9 +82,13 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease, delay: 0.6 }}
-            className="mt-7 sm:mt-8"
+            className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mt-8"
           >
             <GoogleRatingBadge />
+            <span className="hidden h-4 w-px bg-vdb-gold/40 sm:block" aria-hidden />
+            <span className="font-accent text-xs italic text-vdb-muted">
+              Lucknow ki sabse pasandida boutique
+            </span>
           </motion.div>
 
           <motion.div
@@ -93,9 +97,9 @@ export function Hero() {
             transition={{ duration: 0.8, ease, delay: 0.75 }}
             className="mt-9 grid max-w-md grid-cols-3 divide-x divide-vdb-gold/30 text-vdb-ink/80"
           >
-            <Stat n="5+" label="Saalon ki silaai" />
-            <Stat n="200+" label="Khush customers" />
-            <Stat n="48h" label="Alterations" />
+            <Stat icon={Scissors} to={5} suffix="+" label="Saalon ki silaai" />
+            <Stat icon={Heart} to={200} suffix="+" label="Khush customers" />
+            <Stat icon={Clock} to={48} suffix="h" label="Alterations" />
           </motion.div>
         </div>
 
@@ -193,10 +197,46 @@ function HeroSlideshow() {
   );
 }
 
-function Stat({ n, label }: { n: string; label: string }) {
+function CountUp({ to, suffix }: { to: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, to, {
+      duration: 1.2,
+      ease: [0.22, 0.61, 0.36, 1],
+      onUpdate: (v) => setVal(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, to]);
+
   return (
-    <div className="px-4 first:pl-0 last:pr-0">
-      <p className="font-display text-3xl leading-none text-vdb-wine-deep sm:text-4xl">{n}</p>
+    <span ref={ref} className="tabular-nums">
+      {val}
+      {suffix}
+    </span>
+  );
+}
+
+function Stat({
+  icon: Icon,
+  to,
+  suffix,
+  label,
+}: {
+  icon: typeof Scissors;
+  to: number;
+  suffix?: string;
+  label: string;
+}) {
+  return (
+    <div className="group px-4 first:pl-0 last:pr-0">
+      <Icon size={16} className="mb-2 text-vdb-gold transition-transform group-hover:-translate-y-0.5" />
+      <p className="font-display text-3xl leading-none text-vdb-wine-deep sm:text-4xl">
+        <CountUp to={to} suffix={suffix} />
+      </p>
       <p className="mt-1.5 text-[10px] uppercase leading-tight tracking-[0.16em] text-vdb-muted sm:text-[11px]">
         {label}
       </p>
