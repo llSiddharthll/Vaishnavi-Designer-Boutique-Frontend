@@ -232,12 +232,12 @@ function Stat({
   label: string;
 }) {
   return (
-    <div className="group px-4 first:pl-0 last:pr-0">
+    <div className="group flex flex-col items-center px-3 text-center">
       <Icon size={16} className="mb-2 text-vdb-gold transition-transform group-hover:-translate-y-0.5" />
       <p className="font-display text-3xl leading-none text-vdb-wine-deep sm:text-4xl">
         <CountUp to={to} suffix={suffix} />
       </p>
-      <p className="mt-1.5 text-[10px] uppercase leading-tight tracking-[0.16em] text-vdb-muted sm:text-[11px]">
+      <p className="mt-1.5 flex min-h-[2.4em] items-start justify-center text-[10px] uppercase leading-tight tracking-[0.16em] text-vdb-muted sm:text-[11px]">
         {label}
       </p>
     </div>
