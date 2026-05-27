@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, BadgeCheck } from "lucide-react";
+import { MessageCircle, BadgeCheck, ArrowRight } from "lucide-react";
 import { img } from "@/lib/images";
 import { waLink } from "@/lib/env";
 import { GoogleRatingBadge } from "@/components/ui/GoogleRatingBadge";
@@ -71,9 +71,10 @@ export function Hero() {
             </a>
             <Link
               href="/services"
-              className="vdb-link text-xs font-medium uppercase tracking-[0.2em] text-vdb-wine-deep"
+              className="group inline-flex items-center gap-2 rounded-full border border-vdb-wine/35 px-6 py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-vdb-wine-deep transition hover:border-vdb-wine hover:bg-vdb-wine hover:text-vdb-cream sm:px-7"
             >
-              Services Dekhiye →
+              Services Dekhiye
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </motion.div>
 
@@ -90,7 +91,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease, delay: 0.75 }}
-            className="mt-8 grid max-w-md grid-cols-3 gap-4 border-l-2 border-vdb-gold/50 pl-4 text-vdb-ink/80 sm:gap-6 sm:pl-5"
+            className="mt-9 grid max-w-md grid-cols-3 divide-x divide-vdb-gold/30 text-vdb-ink/80"
           >
             <Stat n="5+" label="Saalon ki silaai" />
             <Stat n="200+" label="Khush customers" />
@@ -194,9 +195,9 @@ function HeroSlideshow() {
 
 function Stat({ n, label }: { n: string; label: string }) {
   return (
-    <div>
-      <p className="font-display text-2xl text-vdb-wine-deep sm:text-3xl">{n}</p>
-      <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-vdb-muted sm:text-[11px]">
+    <div className="px-4 first:pl-0 last:pr-0">
+      <p className="font-display text-3xl leading-none text-vdb-wine-deep sm:text-4xl">{n}</p>
+      <p className="mt-1.5 text-[10px] uppercase leading-tight tracking-[0.16em] text-vdb-muted sm:text-[11px]">
         {label}
       </p>
     </div>
