@@ -49,8 +49,8 @@ export default function ContactPage() {
       </section>
 
       <section className="bg-vdb-ivory py-12 sm:py-20">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-8 md:grid-cols-12 md:gap-12">
-          <div className="md:col-span-5">
+        <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 sm:px-8 md:grid-cols-12 md:gap-12">
+          <div className="order-2 md:order-1 md:col-span-5">
             <div className="rounded-xl border border-vdb-gold/30 bg-vdb-cream p-7 sm:p-8">
               <h2 className="font-display text-2xl text-vdb-wine-deep sm:text-3xl">Atelier tak pahunchein</h2>
 
@@ -124,7 +124,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="md:col-span-7">
+          <div className="order-1 md:order-2 md:col-span-7">
             <h2 className="font-display text-2xl text-vdb-wine-deep sm:text-3xl">Ya yahin se message bhejiye.</h2>
             <p className="mt-2 text-sm text-vdb-muted">
               Bata dijiye kya chahiye — hum next step suggest kar denge. Pehli consultation free hai.

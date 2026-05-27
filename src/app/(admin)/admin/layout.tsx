@@ -1,17 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Inbox, FileText, LogOut } from "lucide-react";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { clearSession, getToken, getUser, type AdminUser } from "@/lib/auth-client";
-
-const links = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
-  { href: "/admin/blogs", label: "Blog Posts", icon: FileText },
-];
+import { AppSidebar } from "./_components/app-sidebar";
+import { AdminTopbar } from "./_components/admin-topbar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -41,67 +36,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace("/admin/login");
   }
 
+  // Login screen renders standalone (its own full-page design), no shell.
   if (isLogin) {
-    return <div className="min-h-screen bg-vdb-cream">{children}</div>;
+    return (
+      <div className="admin-scope min-h-svh">
+        {children}
+        <Toaster richColors position="top-center" />
+      </div>
+    );
   }
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-vdb-cream text-vdb-muted">
-        <p className="font-accent text-sm uppercase tracking-[0.2em]">Loading…</p>
+      <div className="admin-scope flex min-h-svh items-center justify-center">
+        <p className="text-sm text-muted-foreground">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="grid min-h-screen bg-vdb-cream md:grid-cols-[260px_1fr]">
-      <aside className="border-r border-vdb-gold/30 bg-vdb-wine-deep p-6 text-vdb-cream md:sticky md:top-0 md:h-screen">
-        <Link href="/admin/dashboard" className="flex items-center gap-3">
-          <Image src="/logo.png" alt="VDB" width={36} height={36} />
-          <div>
-            <p className="font-display text-lg leading-none text-vdb-gold-soft">Vaishnavi</p>
-            <p className="font-accent text-[10px] uppercase tracking-[0.28em] text-vdb-gold">Admin</p>
-          </div>
-        </Link>
-
-        <nav className="mt-10 space-y-1 text-sm">
-          {links.map(({ href, label, icon: Icon }) => {
-            const active = pathname?.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-3 rounded-md px-3 py-2.5 transition ${
-                  active
-                    ? "bg-vdb-gold text-vdb-wine-deep"
-                    : "text-vdb-cream/80 hover:bg-vdb-wine hover:text-vdb-gold-soft"
-                }`}
-              >
-                <Icon size={16} />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="mt-10 border-t border-vdb-cream/15 pt-5">
-          {user && (
-            <>
-              <p className="text-xs text-vdb-cream/60">Signed in as</p>
-              <p className="mt-1 text-sm text-vdb-gold-soft">{user.email}</p>
-            </>
-          )}
-          <button
-            type="button"
-            onClick={onLogout}
-            className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-vdb-cream/80 hover:text-vdb-gold"
-          >
-            <LogOut size={14} /> Sign out
-          </button>
-        </div>
-      </aside>
-
-      <section className="p-6 sm:p-10">{children}</section>
+    <div className="admin-scope">
+      <SidebarProvider>
+        <AppSidebar user={user} onLogout={onLogout} />
+        <SidebarInset>
+          <AdminTopbar />
+          <main className="flex flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+      <Toaster richColors position="top-center" />
     </div>
   );
 }

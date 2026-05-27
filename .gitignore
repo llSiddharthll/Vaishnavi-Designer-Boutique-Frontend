@@ -33,3 +33,6 @@ Thumbs.db
 .turbo/
 .cache/
 .eslintcache
+
+# Test artifacts
+.playwright-mcp/

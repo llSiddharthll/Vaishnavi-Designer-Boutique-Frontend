@@ -7,7 +7,7 @@ import { login } from "@/lib/auth-client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@vdboutique.local");
+  const [email, setEmail] = useState("vaishnavidesignerboutiques@gmail.com");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
         <p className="mt-6 text-center text-[11px] text-vdb-muted">
-          Dev credentials: <span className="font-mono text-vdb-wine">admin@vdboutique.local</span> /{" "}
+          Dev credentials: <span className="font-mono text-vdb-wine">vaishnavidesignerboutiques@gmail.com</span> /{" "}
           <span className="font-mono text-vdb-wine">Vaishnavi@2026</span>
         </p>
       </div>

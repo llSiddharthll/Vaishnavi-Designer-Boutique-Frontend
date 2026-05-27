@@ -10,7 +10,7 @@ export const siteEnv = {
   phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? "+91 82996 94945",
   phoneAltDisplay: process.env.NEXT_PUBLIC_PHONE_ALT_DISPLAY ?? "",
   phoneAltNumber: process.env.NEXT_PUBLIC_PHONE_ALT_NUMBER ?? "",
-  email: process.env.NEXT_PUBLIC_EMAIL ?? "hello@vdboutique.in",
+  email: process.env.NEXT_PUBLIC_EMAIL ?? "vaishnavidesignerboutiques@gmail.com",
   instagramUrl: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://instagram.com/your-handle",
   addressLine1: process.env.NEXT_PUBLIC_ADDRESS_LINE_1 ?? "645A/602, Janki Vihar Colony",
   addressLine2: process.env.NEXT_PUBLIC_ADDRESS_LINE_2 ?? "Jankipuram, Lucknow, Uttar Pradesh 226031",

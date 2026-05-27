@@ -35,29 +35,23 @@ export default function EditBlogPage() {
     })();
   }, [id]);
 
-  if (err) return <p className="text-sm text-vdb-wine">{err}</p>;
-  if (!post) return <p className="text-sm text-vdb-muted">Loading…</p>;
+  if (err) return <p className="text-sm text-destructive">{err}</p>;
+  if (!post) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   return (
-    <div>
-      <h1 className="font-display text-4xl text-vdb-wine-deep">Edit post</h1>
-      <p className="mt-2 text-sm text-vdb-muted">Slug: <span className="font-mono">{post.slug}</span></p>
-      <div className="mt-8">
-        <BlogEditor
-          initial={{
-            id: post.id,
-            title: post.title,
-            slug: post.slug,
-            excerpt: post.excerpt ?? "",
-            contentMd: post.content_md,
-            coverImageUrl: post.cover_image_url ?? "",
-            seoTitle: post.seo_title ?? "",
-            seoDescription: post.seo_description ?? "",
-            tags: post.tags ?? "",
-            status: post.status,
-          }}
-        />
-      </div>
-    </div>
+    <BlogEditor
+      initial={{
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt ?? "",
+        contentMd: post.content_md,
+        coverImageUrl: post.cover_image_url ?? "",
+        seoTitle: post.seo_title ?? "",
+        seoDescription: post.seo_description ?? "",
+        tags: post.tags ?? "",
+        status: post.status,
+      }}
+    />
   );
 }

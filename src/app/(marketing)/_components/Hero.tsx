@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, BadgeCheck } from "lucide-react";
@@ -106,29 +107,88 @@ export function Hero() {
         >
           <div className="relative mx-auto aspect-[3/4] w-full max-w-sm md:max-w-none">
             <div className="absolute -inset-2 rotate-[2deg] rounded-md border border-vdb-gold/60 sm:-inset-3 sm:rotate-[3deg]" aria-hidden />
-            <div className="relative h-full w-full overflow-hidden rounded-md bg-vdb-wine-deep">
-              <Image
-                src={img.heroLehenga}
-                alt="Vaishnavi Designer Boutique Lucknow — bridal lehenga"
-                fill
-                priority
-                sizes="(min-width: 768px) 420px, 88vw"
-                className="object-cover"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-vdb-wine-deep/55 via-transparent to-transparent" aria-hidden />
-              <div className="absolute bottom-0 left-0 right-0 p-4 text-vdb-cream sm:p-5">
-                <p className="font-accent text-[10px] uppercase tracking-[0.32em] text-vdb-gold-soft">
-                  This season
-                </p>
-                <p className="mt-1 font-display text-lg italic leading-tight text-vdb-cream sm:text-xl">
-                  Shaadi ka <span className="not-italic">lehenga</span>.
-                </p>
-              </div>
-            </div>
+            <HeroSlideshow />
           </div>
         </motion.div>
       </div>
     </section>
+  );
+}
+
+const heroSlides: { src: string; alt: string; lead: string; word: string }[] = [
+  { src: img.heroLehenga, alt: "Bridal lehenga — Vaishnavi Designer Boutique Lucknow", lead: "Shaadi ka", word: "lehenga" },
+  { src: img.heroBride, alt: "Bride in custom trousseau — Lucknow boutique", lead: "Bridal", word: "trousseau" },
+  { src: img.heroSareeFlower, alt: "Festive saree styling — Lucknow boutique", lead: "Festive", word: "saree" },
+  { src: img.heroRedSari, alt: "Red and gold sari — Lucknow boutique", lead: "Red & gold", word: "sari" },
+];
+
+function HeroSlideshow() {
+  const ease: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setCurrent((c) => (c + 1) % heroSlides.length),
+      4500
+    );
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="relative h-full w-full overflow-hidden rounded-md bg-vdb-wine-deep">
+      {heroSlides.map((s, i) => (
+        <motion.div
+          key={i}
+          aria-hidden={i !== current}
+          className="absolute inset-0"
+          initial={false}
+          animate={{ opacity: i === current ? 1 : 0 }}
+          transition={{ duration: 1.1, ease }}
+        >
+          <Image
+            src={s.src}
+            alt={i === current ? s.alt : ""}
+            fill
+            priority={i === 0}
+            sizes="(min-width: 768px) 420px, 88vw"
+            className="object-cover"
+          />
+        </motion.div>
+      ))}
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-vdb-wine-deep/55 via-transparent to-transparent" aria-hidden />
+
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-vdb-cream sm:p-5">
+        <p className="font-accent text-[10px] uppercase tracking-[0.32em] text-vdb-gold-soft">
+          This season
+        </p>
+        <div className="relative mt-1 h-7 sm:h-8">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={current}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.5, ease }}
+              className="absolute inset-x-0 font-display text-lg italic leading-tight text-vdb-cream sm:text-xl"
+            >
+              {heroSlides[current].lead}{" "}
+              <span className="not-italic">{heroSlides[current].word}</span>.
+            </motion.p>
+          </AnimatePresence>
+        </div>
+        <div className="mt-3 flex gap-1.5">
+          {heroSlides.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1 rounded-full transition-all ${
+                i === current ? "w-5 bg-vdb-gold-soft" : "w-1.5 bg-vdb-cream/40"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

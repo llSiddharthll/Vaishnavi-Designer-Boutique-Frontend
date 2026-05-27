@@ -4,6 +4,7 @@ import { PromoStrip } from "./_components/PromoStrip";
 import { Marquee } from "./_components/Marquee";
 import { ServicesGrid } from "./_components/ServicesGrid";
 import { MeetTheDesigner } from "./_components/MeetTheDesigner";
+import { GalleryMarquee } from "./_components/GalleryMarquee";
 import { WhyUs } from "./_components/WhyUs";
 import { Testimonials } from "./_components/Testimonials";
 import { InquiryStrip } from "./_components/InquiryStrip";
@@ -25,6 +26,7 @@ export default function HomePage() {
       <Marquee />
       <ServicesGrid />
       <MeetTheDesigner />
+      <GalleryMarquee />
       <WhyUs />
       <Testimonials />
       <InquiryStrip />

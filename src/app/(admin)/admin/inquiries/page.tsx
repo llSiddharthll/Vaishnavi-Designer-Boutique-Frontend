@@ -1,206 +1,380 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Phone,
+  Mail,
+  Calendar,
+  Tag,
+  MessageSquare,
+} from "lucide-react";
 import { adminFetch } from "@/lib/auth-client";
+import type { Inquiry, InquiryStatus } from "../_lib/types";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
-type Inquiry = {
-  id: number;
-  name: string;
-  phone: string;
-  email: string | null;
-  service: string | null;
-  message: string | null;
-  preferred_date: string | null;
-  status: "new" | "contacted" | "closed";
-  notes: string | null;
-  created_at: string;
-};
+const STATUSES: InquiryStatus[] = ["new", "contacted", "closed"];
+const PAGE_SIZE = 10;
 
-const statuses: Inquiry["status"][] = ["new", "contacted", "closed"];
+function StatusBadge({ status }: { status: InquiryStatus }) {
+  const variant =
+    status === "new" ? "default" : status === "contacted" ? "secondary" : "outline";
+  return (
+    <Badge variant={variant} className="capitalize">
+      {status}
+    </Badge>
+  );
+}
+
+function fmtDate(iso: string): string {
+  const d = new Date(iso.includes("T") || iso.includes("Z") ? iso : iso + "Z");
+  return d.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default function AdminInquiriesPage() {
-  const [rows, setRows] = useState<Inquiry[]>([]);
-  const [selected, setSelected] = useState<Inquiry | null>(null);
-  const [filter, setFilter] = useState<string>("");
+  const [rows, setRows] = useState<Inquiry[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState<"all" | InquiryStatus>("all");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+
+  const [selected, setSelected] = useState<Inquiry | null>(null);
+  const [draftStatus, setDraftStatus] = useState<InquiryStatus>("new");
+  const [draftNotes, setDraftNotes] = useState("");
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     try {
-      const q = filter ? `?status=${filter}` : "";
-      const data = await adminFetch<{ rows: Inquiry[] }>(`/inquiries${q}`);
+      const data = await adminFetch<{ rows: Inquiry[] }>("/inquiries?limit=200");
       setRows(data.rows);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed");
+      setErr(e instanceof Error ? e.message : "Failed to load");
     }
   }
 
   useEffect(() => {
     load();
-  }, [filter]);
+  }, []);
+
+  const counts = useMemo(() => {
+    const c = { all: rows?.length ?? 0, new: 0, contacted: 0, closed: 0 };
+    for (const r of rows ?? []) c[r.status] += 1;
+    return c;
+  }, [rows]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return (rows ?? []).filter((r) => {
+      if (tab !== "all" && r.status !== tab) return false;
+      if (!q) return true;
+      return (
+        r.name.toLowerCase().includes(q) ||
+        r.phone.toLowerCase().includes(q) ||
+        (r.service ?? "").toLowerCase().includes(q)
+      );
+    });
+  }, [rows, tab, search]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pageRows = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
+  function openRow(r: Inquiry) {
+    setSelected(r);
+    setDraftStatus(r.status);
+    setDraftNotes(r.notes ?? "");
+  }
 
   async function save() {
     if (!selected) return;
-    setBusy(true);
+    setSaving(true);
     try {
       await adminFetch(`/inquiries/${selected.id}`, {
         method: "PATCH",
-        body: JSON.stringify({ status: selected.status, notes: selected.notes ?? "" }),
+        body: JSON.stringify({ status: draftStatus, notes: draftNotes }),
       });
-      await load();
+      toast.success("Inquiry updated");
       setSelected(null);
+      await load();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : "Update failed");
     } finally {
-      setBusy(false);
+      setSaving(false);
     }
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl text-vdb-wine-deep">Inquiries</h1>
-          <p className="mt-2 text-sm text-vdb-muted">All form submissions from the website.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <label className="text-xs uppercase tracking-[0.18em] text-vdb-muted">Filter</label>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="rounded-md border border-vdb-gold/40 bg-vdb-ivory px-3 py-2 text-sm"
-          >
-            <option value="">All</option>
-            <option value="new">New</option>
-            <option value="contacted">Contacted</option>
-            <option value="closed">Closed</option>
-          </select>
+    <div className="flex flex-col gap-5">
+      <div>
+        <h2 className="text-2xl font-semibold tracking-tight">Inquiries</h2>
+        <p className="text-sm text-muted-foreground">
+          Every enquiry submitted from the website.
+        </p>
+      </div>
+
+      {err && (
+        <Card className="border-destructive/40 p-4 text-sm text-destructive">{err}</Card>
+      )}
+
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => {
+            setTab(v as typeof tab);
+            setPage(0);
+          }}
+        >
+          <TabsList>
+            <TabsTrigger value="all">All ({counts.all})</TabsTrigger>
+            <TabsTrigger value="new">New ({counts.new})</TabsTrigger>
+            <TabsTrigger value="contacted">Contacted ({counts.contacted})</TabsTrigger>
+            <TabsTrigger value="closed">Closed ({counts.closed})</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search name, phone, service…"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
+            className="pl-8"
+          />
         </div>
       </div>
 
-      {err && <p className="mt-4 text-sm text-vdb-wine">{err}</p>}
-
-      <div className="mt-6 overflow-hidden rounded-xl border border-vdb-gold/30 bg-vdb-ivory">
-        <table className="min-w-full text-sm">
-          <thead className="bg-vdb-cream text-left">
-            <tr className="text-[11px] uppercase tracking-[0.18em] text-vdb-muted">
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Phone</th>
-              <th className="px-4 py-3">Service</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">When</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-vdb-gold/20">
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-vdb-muted">No inquiries yet.</td>
-              </tr>
+      {/* Table */}
+      <Card className="overflow-hidden py-0">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Name</TableHead>
+              <TableHead className="hidden sm:table-cell">Phone</TableHead>
+              <TableHead className="hidden md:table-cell">Service</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="hidden lg:table-cell">Received</TableHead>
+              <TableHead className="w-[1%]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows === null ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={6}>
+                    <Skeleton className="h-6 w-full" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : pageRows.length === 0 ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={6} className="h-28 text-center text-muted-foreground">
+                  No inquiries match.
+                </TableCell>
+              </TableRow>
             ) : (
-              rows.map((r) => (
-                <tr key={r.id} className="hover:bg-vdb-cream/60">
-                  <td className="px-4 py-3 font-medium text-vdb-ink">{r.name}</td>
-                  <td className="px-4 py-3 text-vdb-muted">{r.phone}</td>
-                  <td className="px-4 py-3 text-vdb-muted">{r.service ?? "—"}</td>
-                  <td className="px-4 py-3">
-                    <StatusPill status={r.status} />
-                  </td>
-                  <td className="px-4 py-3 text-vdb-muted">{new Date(r.created_at).toLocaleString()}</td>
-                  <td className="px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={() => setSelected(r)}
-                      className="vdb-link text-xs uppercase tracking-[0.18em] text-vdb-wine"
-                    >
+              pageRows.map((r) => (
+                <TableRow
+                  key={r.id}
+                  onClick={() => openRow(r)}
+                  className="cursor-pointer"
+                >
+                  <TableCell className="font-medium">{r.name}</TableCell>
+                  <TableCell className="hidden text-muted-foreground sm:table-cell">
+                    {r.phone}
+                  </TableCell>
+                  <TableCell className="hidden text-muted-foreground md:table-cell">
+                    {r.service ?? "—"}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={r.status} />
+                  </TableCell>
+                  <TableCell className="hidden whitespace-nowrap text-muted-foreground lg:table-cell">
+                    {fmtDate(r.created_at)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm">
                       Open
-                    </button>
-                  </td>
-                </tr>
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </Card>
 
-      {selected && (
-        <div className="fixed inset-0 z-50 flex" onClick={() => setSelected(null)}>
-          <div className="flex-1 bg-vdb-ink/40" />
-          <div
-            className="w-full max-w-md overflow-y-auto bg-vdb-ivory p-6 shadow-2xl sm:max-w-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-2xl text-vdb-wine-deep">{selected.name}</h2>
-              <button onClick={() => setSelected(null)} className="text-sm text-vdb-muted">✕</button>
-            </div>
-            <p className="mt-1 text-xs text-vdb-muted">{new Date(selected.created_at).toLocaleString()}</p>
-
-            <dl className="mt-6 space-y-3 text-sm">
-              <Row k="Phone" v={selected.phone} />
-              <Row k="Email" v={selected.email ?? "—"} />
-              <Row k="Service" v={selected.service ?? "—"} />
-              <Row k="Preferred" v={selected.preferred_date ?? "—"} />
-              <Row k="Message" v={selected.message ?? "—"} />
-            </dl>
-
-            <div className="mt-6">
-              <label className="block text-xs uppercase tracking-[0.18em] text-vdb-muted">Status</label>
-              <select
-                value={selected.status}
-                onChange={(e) =>
-                  setSelected({ ...selected, status: e.target.value as Inquiry["status"] })
-                }
-                className="mt-1 w-full rounded-md border border-vdb-gold/40 bg-vdb-cream px-3 py-2 text-sm"
-              >
-                {statuses.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mt-4">
-              <label className="block text-xs uppercase tracking-[0.18em] text-vdb-muted">Notes</label>
-              <textarea
-                rows={4}
-                value={selected.notes ?? ""}
-                onChange={(e) => setSelected({ ...selected, notes: e.target.value })}
-                className="mt-1 w-full rounded-md border border-vdb-gold/40 bg-vdb-cream px-3 py-2 text-sm"
-              />
-            </div>
-
-            <button
-              onClick={save}
-              disabled={busy}
-              className="mt-6 w-full rounded-full bg-vdb-wine px-6 py-3 text-xs uppercase tracking-[0.2em] text-vdb-ivory transition hover:bg-vdb-wine-deep disabled:opacity-50"
+      {/* Pagination */}
+      {filtered.length > PAGE_SIZE && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            {safePage * PAGE_SIZE + 1}–{Math.min((safePage + 1) * PAGE_SIZE, filtered.length)} of{" "}
+            {filtered.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={safePage === 0}
             >
-              {busy ? "Saving…" : "Save"}
-            </button>
+              <ChevronLeft className="size-4" /> Prev
+            </Button>
+            <span className="tabular-nums">
+              {safePage + 1} / {pageCount}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+              disabled={safePage >= pageCount - 1}
+            >
+              Next <ChevronRight className="size-4" />
+            </Button>
           </div>
         </div>
       )}
+
+      {/* Detail sheet */}
+      <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <SheetContent className="flex w-full flex-col gap-0 sm:max-w-md">
+          {selected && (
+            <>
+              <SheetHeader>
+                <SheetTitle>{selected.name}</SheetTitle>
+                <SheetDescription>{fmtDate(selected.created_at)}</SheetDescription>
+              </SheetHeader>
+
+              <div className="flex-1 overflow-y-auto px-4">
+                <dl className="space-y-3 text-sm">
+                  <DetailRow icon={Phone} label="Phone">
+                    <a href={`tel:${selected.phone}`} className="hover:underline">
+                      {selected.phone}
+                    </a>
+                  </DetailRow>
+                  <DetailRow icon={Mail} label="Email">
+                    {selected.email ? (
+                      <a href={`mailto:${selected.email}`} className="hover:underline">
+                        {selected.email}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </DetailRow>
+                  <DetailRow icon={Tag} label="Service">
+                    {selected.service ?? "—"}
+                  </DetailRow>
+                  <DetailRow icon={Calendar} label="Preferred">
+                    {selected.preferred_date ?? "—"}
+                  </DetailRow>
+                  <DetailRow icon={MessageSquare} label="Message">
+                    <span className="whitespace-pre-wrap">{selected.message ?? "—"}</span>
+                  </DetailRow>
+                </dl>
+
+                <div className="mt-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="status">Status</Label>
+                    <Select
+                      value={draftStatus}
+                      onValueChange={(v) => setDraftStatus(v as InquiryStatus)}
+                    >
+                      <SelectTrigger id="status" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATUSES.map((s) => (
+                          <SelectItem key={s} value={s} className="capitalize">
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="notes">Notes</Label>
+                    <Textarea
+                      id="notes"
+                      rows={5}
+                      value={draftNotes}
+                      onChange={(e) => setDraftNotes(e.target.value)}
+                      placeholder="Follow-up notes, quote sent, fitting date…"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <SheetFooter className="flex-row gap-2">
+                <Button onClick={save} disabled={saving} className="flex-1">
+                  {saving ? "Saving…" : "Save changes"}
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="outline">Close</Button>
+                </SheetClose>
+              </SheetFooter>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
 
-function StatusPill({ status }: { status: Inquiry["status"] }) {
-  const map: Record<Inquiry["status"], string> = {
-    new: "bg-vdb-wine text-vdb-cream",
-    contacted: "bg-vdb-gold text-vdb-wine-deep",
-    closed: "bg-vdb-ink/15 text-vdb-ink",
-  };
+function DetailRow({
+  icon: Icon,
+  label,
+  children,
+}: {
+  icon: typeof Phone;
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <span className={`inline-block rounded-full px-3 py-0.5 text-[11px] uppercase tracking-[0.18em] ${map[status]}`}>
-      {status}
-    </span>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="grid grid-cols-[110px_1fr] gap-3">
-      <dt className="text-xs uppercase tracking-[0.18em] text-vdb-muted">{k}</dt>
-      <dd className="text-vdb-ink/85">{v}</dd>
+    <div className="grid grid-cols-[1.25rem_5rem_1fr] items-start gap-2">
+      <Icon className="mt-0.5 size-4 text-muted-foreground" />
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="text-foreground">{children}</dd>
     </div>
   );
 }

@@ -64,7 +64,7 @@ Animations: **Motion** (`motion/react`) — one orchestrated hero reveal, viewpo
 
 ## Admin credentials (dev only)
 
-- Email: `admin@vdboutique.local`
+- Email: `vaishnavidesignerboutiques@gmail.com`
 - Password: `Vaishnavi@2026`
 
 Change before going public.

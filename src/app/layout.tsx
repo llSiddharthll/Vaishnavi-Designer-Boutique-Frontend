@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Cormorant_Garamond, Inter_Tight, Marcellus } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
-import { MobileCtaBar } from "@/components/layout/MobileCtaBar";
-import { LocalBusinessJsonLd } from "@/components/seo/JsonLd";
 import { siteEnv } from "@/lib/env";
 
 const cormorant = Cormorant_Garamond({
@@ -63,6 +59,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   robots: { index: true, follow: true },
+  verification: { google: "HLmTlGtQ9wg0U1TnfkWhaU9dvL6biGAp_wvQlNsj7WE" },
 };
 
 export const viewport: Viewport = {
@@ -74,14 +71,21 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${interTight.variable} ${marcellus.variable}`}>
-      <body className="pb-14 md:pb-0">
-        <LocalBusinessJsonLd />
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <MobileCtaBar />
-        <WhatsAppFab />
-      </body>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-74TEDCR4ND"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-74TEDCR4ND');
+          `}
+        </Script>
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
