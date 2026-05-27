@@ -8,9 +8,9 @@ import { siteEnv } from "@/lib/env";
 import { blogDefaultCover, galleryImages } from "@/lib/images";
 
 export const metadata: Metadata = buildMetadata({
-  title: "The Journal — Boutique Stories from Lucknow",
+  title: "The Journal — Lucknow Boutique Tips",
   description:
-    "Notes, fittings stories, and fabric care guides from Vaishnavi Designer Boutique's Lucknow atelier — for women who love clothes that last.",
+    "Bridal prep, fitting guides and fabric-care tips from Vaishnavi Designer Boutique — Lucknow's best designer boutique, in Jankipuram.",
   path: "/blog",
 });
 

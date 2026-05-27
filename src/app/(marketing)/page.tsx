@@ -12,9 +12,9 @@ import { HomeFaq } from "./_components/HomeFaq";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Vaishnavi Designer Boutique — Lucknow's Custom Stitching Atelier",
+  title: "Vaishnavi Designer Boutique — Best Boutique in Lucknow",
   description:
-    "Jankipuram Lucknow ka 4.9★ designer boutique — custom lehenga, saree blouse, party wear aur same-day alterations. Free consultation. WhatsApp pe slot book karein.",
+    "Lucknow's #1 rated designer boutique (4.9★) in Jankipuram — custom bridal lehengas, saree blouses, party wear & same-day alterations. Free consultation, perfect-fit promise. Book on WhatsApp.",
   path: "/",
 });
 

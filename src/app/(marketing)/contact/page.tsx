@@ -7,9 +7,9 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { GoogleRatingBadge } from "@/components/ui/GoogleRatingBadge";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Contact — Vaishnavi Designer Boutique Jankipuram Lucknow",
+  title: "Contact — Best Boutique in Lucknow",
   description:
-    "Vaishnavi Designer Boutique se baat karein — Jankipuram Lucknow. Phone, WhatsApp, address aur free consultation booking form.",
+    "Visit Lucknow's top-rated designer boutique in Jankipuram, or book a free consultation on WhatsApp. Call, message or use our enquiry form — we reply within a day.",
   path: "/contact",
 });
 

@@ -8,9 +8,9 @@ import { img } from "@/lib/images";
 import { GoogleRatingBadge } from "@/components/ui/GoogleRatingBadge";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Hamari Kahani — Vaishnavi Designer Boutique Lucknow",
+  title: "About — Lucknow's Best Designer Boutique",
   description:
-    "Vaishnavi Designer Boutique Jankipuram Lucknow ki kahani — 2021 mein ek sewing machine se shuru hua atelier, aaj 4.9★ rated, 200+ regular customers ke saath.",
+    "The story behind Lucknow's most-loved designer boutique — an owner-led Jankipuram atelier with 5+ years of craft, a 4.9★ rating and 200+ happy customers.",
   path: "/about",
 });
 

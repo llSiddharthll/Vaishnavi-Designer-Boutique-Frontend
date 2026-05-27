@@ -8,9 +8,9 @@ import { siteEnv } from "@/lib/env";
 import { serviceImage } from "@/lib/images";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Boutique Services Lucknow — Vaishnavi Designer Boutique",
+  title: "Best Boutique Services in Lucknow",
   description:
-    "Hamari sab services Lucknow mein — bridal lehenga design, saree blouse stitching, designer dresses, saree pre-stitching, aur fall pico alterations.",
+    "Bridal lehenga design, saree blouse stitching, designer party wear, saree pre-stitching & same-day alterations — Lucknow's best designer boutique, perfectly fitted to you.",
   path: "/services",
 });
 

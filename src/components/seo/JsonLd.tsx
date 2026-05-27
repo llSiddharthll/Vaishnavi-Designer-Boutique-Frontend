@@ -58,6 +58,23 @@ export function LocalBusinessJsonLd() {
   return <JsonLdScript data={data} />;
 }
 
+export function WebSiteJsonLd() {
+  const data: Obj = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteEnv.siteName,
+    alternateName: "Vaishnavi Boutique Lucknow",
+    url: siteEnv.siteUrl,
+    inLanguage: "en-IN",
+    publisher: {
+      "@type": "Organization",
+      name: siteEnv.siteName,
+      logo: { "@type": "ImageObject", url: `${siteEnv.siteUrl}/logo.png` },
+    },
+  };
+  return <JsonLdScript data={data} />;
+}
+
 export function BreadcrumbJsonLd({
   items,
 }: {
@@ -132,7 +149,7 @@ export function ArticleJsonLd({
     "@type": "Article",
     headline,
     description,
-    image: image ?? `${siteEnv.siteUrl}/og-default.jpg`,
+    image: image ?? `${siteEnv.siteUrl}/opengraph-image`,
     url,
     datePublished: datePublished ?? undefined,
     author: { "@type": "Organization", name: siteEnv.siteName },

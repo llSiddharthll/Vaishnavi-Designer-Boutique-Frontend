@@ -28,11 +28,11 @@ const marcellus = Marcellus({
 export const metadata: Metadata = {
   metadataBase: new URL(siteEnv.siteUrl),
   title: {
-    default: "Vaishnavi Designer Boutique — Lucknow's Custom Stitching Atelier",
+    default: "Vaishnavi Designer Boutique — Best Boutique in Lucknow",
     template: "%s | Vaishnavi Designer Boutique",
   },
   description:
-    "Designer boutique in Lucknow specialising in custom lehengas, saree blouses, party-wear dresses, alterations and saree pre-stitching. Hand-fitted, no rush.",
+    "Lucknow's #1 rated designer boutique (4.9★) in Jankipuram — custom bridal lehengas, saree blouses, party wear & same-day alterations. Free consultation, perfect-fit promise.",
   applicationName: siteEnv.siteName,
   keywords: [
     "boutique in Lucknow",
@@ -47,17 +47,15 @@ export const metadata: Metadata = {
     "custom dress Lucknow",
   ],
   openGraph: {
-    title: "Vaishnavi Designer Boutique — Lucknow's Custom Stitching Atelier",
+    title: "Vaishnavi Designer Boutique — Best Boutique in Lucknow",
     description:
-      "Custom lehengas, saree blouses, party wear, pre-stitched sarees, fall pico and alterations — hand-fitted at our Lucknow atelier.",
+      "Lucknow's #1 rated designer boutique (4.9★) — custom bridal lehengas, saree blouses, party wear & same-day alterations in Jankipuram.",
     url: siteEnv.siteUrl,
     siteName: siteEnv.siteName,
     locale: "en_IN",
     type: "website",
-    images: ["/og-default.jpg"],
   },
   twitter: { card: "summary_large_image" },
-  icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   robots: { index: true, follow: true },
   verification: { google: "HLmTlGtQ9wg0U1TnfkWhaU9dvL6biGAp_wvQlNsj7WE" },
 };

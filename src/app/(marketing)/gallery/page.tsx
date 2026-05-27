@@ -7,9 +7,9 @@ import { siteEnv } from "@/lib/env";
 import { galleryImages } from "@/lib/images";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Lookbook — Vaishnavi Designer Boutique Lucknow",
+  title: "Lookbook — Best Boutique in Lucknow",
   description:
-    "Hamare atelier ke kuch recent pieces ka glimpse — bridal lehenga, saree blouse, sangeet outfits, party wear aur saree draping. Lucknow boutique gallery.",
+    "Browse real work from Lucknow's top-rated designer boutique — bridal lehengas, saree blouses, sangeet & party-wear, and saree draping from our Jankipuram atelier.",
   path: "/gallery",
 });
 
