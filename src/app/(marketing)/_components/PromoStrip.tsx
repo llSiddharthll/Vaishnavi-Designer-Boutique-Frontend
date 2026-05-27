@@ -13,17 +13,19 @@ export function PromoStrip() {
           "radial-gradient(circle at 20% 30%, rgba(255,235,180,0.45) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.25) 0%, transparent 55%)",
       }} aria-hidden />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-5 sm:px-8 md:flex-row md:justify-between md:gap-6">
-        <div className="flex items-start gap-3 md:items-center">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vdb-gold text-vdb-wine-deep">
+        <div className="flex items-start gap-3 text-center md:text-left">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vdb-gold text-vdb-wine-deep">
             <Sparkles size={18} />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="font-accent text-[10px] uppercase tracking-[0.32em] text-vdb-gold-soft sm:text-xs">
               Is mahine ka offer
             </p>
-            <p className="mt-1 font-display text-lg leading-tight text-vdb-gold-soft sm:text-xl md:text-2xl">
-              <span className="font-semibold text-white">Free consultation</span> +
-              first fitting on us · sirf appointment book kijiye
+            <p className="mt-1 font-display text-lg leading-tight text-pretty text-vdb-gold-soft sm:text-xl md:text-2xl">
+              <span className="font-semibold text-white">Free consultation</span> + first fitting on us
+            </p>
+            <p className="mt-1 text-[11px] text-vdb-cream/70 sm:text-xs">
+              Sirf appointment book kijiye
             </p>
           </div>
         </div>
